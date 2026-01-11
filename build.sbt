@@ -6,7 +6,8 @@ scalaVersion := "2.13.13"
 
 libraryDependencies ++= Seq(
   "org.scalameta" %% "scalameta" % "4.9.3",
-  "com.github.scopt" %% "scopt" % "4.1.0"
+  "com.github.scopt" %% "scopt" % "4.1.0",
+  "org.scalatest" %% "scalatest" % "3.2.18" % Test
 )
 
 Compile / unmanagedSources / excludeFilter := HiddenFileFilter || "demo.scala"

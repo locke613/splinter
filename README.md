@@ -21,3 +21,8 @@ sbt "run demo.scala"
 ```bash
 sbt "run --fix demo.scala"
 ```
+
+**Run Unit tests:**
+```bash
+sbt test
+```
