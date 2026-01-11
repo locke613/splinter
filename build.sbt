@@ -10,3 +10,5 @@ libraryDependencies ++= Seq(
 )
 
 Compile / unmanagedSources / excludeFilter := HiddenFileFilter || "demo.scala"
+
+assembly / assemblyJarName := "splinter.jar"
