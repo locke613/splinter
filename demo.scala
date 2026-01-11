@@ -45,6 +45,28 @@ object DemoApp {
     // Prefer Find
     val list = Seq(1, 2, 3, 4)
     list.filter(x => x > 2).headOption
+
+    // Avoid Var Update
+    var loopVar = 0
+    for (i <- 0 to 10) {
+      loopVar += 1
+    }
+    if (loopVar > 5) {
+      loopVar = 0
+    }
+  }
+
+  // Avoid Data Traits (Anti-Pattern)
+  trait PersonLike {
+    def name: String
+    def age: Int
+  }
+
+  // Avoid Catching Throwable
+  try {
+    // do something
+  } catch {
+    case t: Throwable => println("Caught everything")
   }
 
   def veryLongMethod(): Unit = {
