@@ -1,7 +1,7 @@
 package com.splinter
 
 import com.splinter.rules.autofix.{AvoidCollect, AvoidCountZero, PreferFind, ReplaceUnionAll}
-import com.splinter.rules.manual.{AvoidTupleAccess, AvoidDeepNesting, AvoidLongMethods, AvoidLargeTuples, FilterAfterJoin, AvoidReturn, AvoidVar, AvoidVarUpdate, AvoidCatchingThrowable, AvoidNull, AvoidOptionGet}
+import com.splinter.rules.manual.{AvoidTupleAccess, AvoidDeepNesting, AvoidLongMethods, AvoidLargeTuples, FilterAfterJoin, AvoidReturn, AvoidVar, AvoidVarUpdate, AvoidCatchingThrowable, AvoidNull, AvoidOptionGet, AvoidHead}
 import com.splinter.rules.Fix
 import java.io.File
 import scala.meta._
@@ -30,7 +30,7 @@ object Main {
   }
 
   def runLinter(config: Config): Unit = {
-    val rules = Seq(AvoidCollect, AvoidCountZero, AvoidTupleAccess, AvoidDeepNesting, AvoidLongMethods, AvoidLargeTuples, FilterAfterJoin, ReplaceUnionAll, PreferFind, AvoidReturn, AvoidVar, AvoidVarUpdate, AvoidCatchingThrowable, AvoidNull, AvoidOptionGet)
+    val rules = Seq(AvoidCollect, AvoidCountZero, AvoidTupleAccess, AvoidDeepNesting, AvoidLongMethods, AvoidLargeTuples, FilterAfterJoin, ReplaceUnionAll, PreferFind, AvoidReturn, AvoidVar, AvoidVarUpdate, AvoidCatchingThrowable, AvoidNull, AvoidOptionGet, AvoidHead)
     
     config.files.foreach { file =>
       if (file.exists() && file.isFile) {

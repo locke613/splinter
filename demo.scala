@@ -147,4 +147,9 @@ object DemoApp {
   def optionGetUsage(opt: Option[Int]): Unit = {
     val x = opt.get
   }
+
+  // Avoid Head
+  def headUsage(seq: Seq[Int]): Unit = {
+    val x = seq.head
+  }
 }
