@@ -137,4 +137,14 @@ object DemoApp {
   def mutableState(): Unit = {
     var count = 0
   }
+
+  // Avoid Null
+  def nullUsage(): Unit = {
+    val x: String = null
+  }
+
+  // Avoid Option.get
+  def optionGetUsage(opt: Option[Int]): Unit = {
+    val x = opt.get
+  }
 }
