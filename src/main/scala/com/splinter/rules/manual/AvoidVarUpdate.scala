@@ -26,18 +26,16 @@ object AvoidVarUpdate extends Rule {
     op.endsWith("=") && op != "==" && op != "!=" && op != "<=" && op != ">="
   }
 
+  @scala.annotation.tailrec
   private def isInsideLoopOrCondition(t: Tree): Boolean = {
-    var current = t.parent
-    while (current.isDefined) {
-      val node = current.get
-      node match {
-        case _: Term.For | _: Term.While | _: Term.Do => return true
-        case _: Term.If => return true
-        case Term.Apply(Term.Select(_, Term.Name("foreach")), _) => return true
-        case _ => 
+    t.parent match {
+      case Some(node) => node match {
+        case _: Term.For | _: Term.While | _: Term.Do => true
+        case _: Term.If => true
+        case Term.Apply(Term.Select(_, Term.Name("foreach")), _) => true
+        case _ => isInsideLoopOrCondition(node)
       }
-      current = node.parent
+      case None => false
     }
-    false
   }
 }

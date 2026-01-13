@@ -32,7 +32,18 @@ object Main {
   def runLinter(config: Config): Unit = {
     val rules = Seq(AvoidCollect, AvoidCountZero, AvoidTupleAccess, AvoidDeepNesting, AvoidLongMethods, AvoidLargeTuples, FilterAfterJoin, ReplaceUnionAll, PreferFind, AvoidReturn, AvoidVar, AvoidVarUpdate, AvoidCatchingThrowable, AvoidNull, AvoidOptionGet, AvoidHead)
     
-    config.files.foreach { file =>
+    val filesToAnalyze = config.files.flatMap { file =>
+      if (file.isDirectory) {
+        findAllScalaFiles(file)
+      } else if (file.exists()) {
+        Seq(file)
+      } else {
+        println(s"File not found: ${file.getPath}")
+        Seq.empty
+      }
+    }
+
+    filesToAnalyze.foreach { file =>
       if (file.exists() && file.isFile) {
         val path = java.nio.file.Paths.get(file.getAbsolutePath)
         val bytes = java.nio.file.Files.readAllBytes(path)
@@ -62,9 +73,17 @@ object Main {
           case Parsed.Error(pos, message, _) =>
             println(s"Error parsing ${file.getPath}: $message at $pos")
         }
-      } else {
-        println(s"File not found: ${file.getPath}")
       }
+    }
+  }
+
+  def findAllScalaFiles(dir: File): Seq[File] = {
+    val files = dir.listFiles()
+    if (files == null) Seq.empty
+    else files.toSeq.flatMap { f =>
+      if (f.isDirectory) findAllScalaFiles(f)
+      else if (f.getName.endsWith(".scala")) Seq(f)
+      else Seq.empty
     }
   }
 
