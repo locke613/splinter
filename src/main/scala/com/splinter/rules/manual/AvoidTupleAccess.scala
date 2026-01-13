@@ -3,6 +3,10 @@ package com.splinter.rules.manual
 import com.splinter.rules.{Rule, Issue}
 import scala.meta._
 
+/**
+ * Rule to detect positional tuple access (e.g. `._1`, `._2`).
+ * Positional access reduces readability and makes code brittle to changes in tuple structure.
+ */
 object AvoidTupleAccess extends Rule {
   override def name: String = "AvoidTupleAccess"
 

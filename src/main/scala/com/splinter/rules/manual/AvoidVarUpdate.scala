@@ -16,14 +16,13 @@ object AvoidVarUpdate extends Rule {
       case t @ Term.Assign(_, _) if isInsideLoopOrCondition(t) =>
         Issue("Style: Avoid updating vars inside loops or conditions. Use functional transformations (map/fold) or 'val result = if...' expressions.", t.pos)
       
-      case t @ Term.ApplyInfix(_, Term.Name(op), _, _) 
-        if isAssignmentOp(op) && isInsideLoopOrCondition(t) =>
+      case t @ Term.ApplyInfix(_, Term.Name(op), _, _) if isAssignmentOp(op) && isInsideLoopOrCondition(t) =>
         Issue(s"Style: Avoid updating vars inside loops or conditions (detected '$op').", t.pos)
     }
   }
 
   private def isAssignmentOp(op: String): Boolean = {
-    op.endsWith("=") && op != "==" && op != "!=" && op != "<=" && op != ">="
+    op.endsWith("=") && op != "==" && op != "!=" && op != "<=" && op != ">=" && op != "===" && op != "=!="
   }
 
   @scala.annotation.tailrec
@@ -32,7 +31,7 @@ object AvoidVarUpdate extends Rule {
       case Some(node) => node match {
         case _: Term.For | _: Term.While | _: Term.Do => true
         case _: Term.If => true
-        case Term.Apply(Term.Select(_, Term.Name("foreach")), _) => true
+        case Term.Apply(Term.Select(_, Term.Name("foreach") | Term.Name("map") | Term.Name("flatMap")), _) => true
         case _ => isInsideLoopOrCondition(node)
       }
       case None => false
