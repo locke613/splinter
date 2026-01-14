@@ -18,6 +18,7 @@ object Main {
       opt[Unit]("format")
         .action((_, c) => c.copy(format = true))
         .text("Format code using Scalafmt")
+      help("help").text("prints this usage text")
       arg[File]("<file>...")
         .unbounded()
         .action((x, c) => c.copy(files = c.files :+ x))
