@@ -5,14 +5,14 @@ object DemoApp {
   def main(args: Array[String]): Unit = {
     val spark = SparkSession.builder.getOrCreate()
     import spark.implicits._
-    
+
     val rdd = spark.sparkContext.parallelize(Seq(1, 2, 3))
     val df = Seq((1, "a"), (2, "b")).toDF("id", "value")
     val otherDf = Seq((1, "x")).toDF("id", "other")
-    
+
     // Bad patterns
     val data = rdd.collect()
-    
+
     if (rdd.count() == 0) {
       println("Empty")
     }
@@ -26,7 +26,7 @@ object DemoApp {
       if (true) {
         if (true) {
           if (true) {
-             println("Too deep")
+            println("Too deep")
           }
         }
       }

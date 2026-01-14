@@ -12,7 +12,7 @@ class AvoidOptionGetSpec extends AnyFlatSpec with Matchers {
     val issues = AvoidOptionGet.check(tree)
     
     issues should have size 1
-    issues.head.message should include ("Avoid using Option.get")
+    issues.head.message should include ("Avoid using .get")
   }
 
   it should "detect Option.get usage with parens" in {

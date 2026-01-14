@@ -6,7 +6,7 @@ import com.splinter.rules.Fix
 import java.io.File
 import scala.meta._
 
-case class Config(files: Seq[File] = Seq(), fix: Boolean = false)
+case class Config(files: Seq[File] = Seq(), fix: Boolean = false, format: Boolean = false)
 
 object Main {
   def main(args: Array[String]): Unit = {
@@ -15,6 +15,9 @@ object Main {
       opt[Unit]("fix")
         .action((_, c) => c.copy(fix = true))
         .text("Automatically fix issues")
+      opt[Unit]("format")
+        .action((_, c) => c.copy(format = true))
+        .text("Format code using Scalafmt")
       arg[File]("<file>...")
         .unbounded()
         .action((x, c) => c.copy(files = c.files :+ x))
@@ -54,18 +57,36 @@ object Main {
           case Parsed.Success(tree) =>
             val issues = rules.flatMap(_.check(tree))
             
-            if (config.fix) {
+            if (config.fix || config.format) {
               val fixes = issues.flatMap(_.fix).sortBy(_.position.start).reverse
-              if (fixes.nonEmpty) {
-                val fixedText = applyFixes(text, fixes)
-                java.nio.file.Files.write(path, fixedText.getBytes("UTF-8"))
+              var currentText = text
+              var changed = false
+
+              if (config.fix && fixes.nonEmpty) {
+                currentText = applyFixes(text, fixes)
+                changed = true
                 println(s"Fixed ${fixes.size} issues in ${file.getPath}")
               }
               
-              val manualIssues = issues.filter(_.fix.isEmpty)
-              if (manualIssues.nonEmpty) {
-                println(s"The following issues require manual intervention in ${file.getPath}:")
-                manualIssues.foreach(println)
+              if (config.format) {
+                val scalafmt = org.scalafmt.interfaces.Scalafmt.create(this.getClass.getClassLoader)
+                val configPath = java.nio.file.Paths.get(".scalafmt.conf")
+                currentText = scalafmt.format(configPath, path, currentText)
+                changed = true
+              }
+
+              if (changed && currentText != text) {
+                java.nio.file.Files.write(path, currentText.getBytes("UTF-8"))
+              }
+
+              if (config.fix) {
+                val manualIssues = issues.filter(_.fix.isEmpty)
+                if (manualIssues.nonEmpty) {
+                  println(s"The following issues require manual intervention in ${file.getPath}:")
+                  manualIssues.foreach(println)
+                }
+              } else {
+                issues.foreach(println)
               }
             } else {
               issues.foreach(println)
