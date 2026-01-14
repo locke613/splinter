@@ -1,12 +1,34 @@
 package com.splinter
 
-import com.splinter.rules.autofix.{AvoidCollect, AvoidCountZero, PreferFind, ReplaceUnionAll}
-import com.splinter.rules.manual.{AvoidTupleAccess, AvoidDeepNesting, AvoidLongMethods, AvoidLargeTuples, FilterAfterJoin, AvoidReturn, AvoidVar, AvoidVarUpdate, AvoidCatchingThrowable, AvoidNull, AvoidOptionGet, AvoidHead}
-import com.splinter.rules.Fix
+import com.splinter.rules.autofix.{
+  AvoidCollect,
+  AvoidCountZero,
+  PreferFind,
+  ReplaceUnionAll
+}
+import com.splinter.rules.manual.{
+  AvoidTupleAccess,
+  AvoidDeepNesting,
+  AvoidLongMethods,
+  AvoidLargeTuples,
+  FilterAfterJoin,
+  AvoidReturn,
+  AvoidVar,
+  AvoidVarUpdate,
+  AvoidCatchingThrowable,
+  AvoidNull,
+  AvoidOptionGet,
+  AvoidHead
+}
+import com.splinter.rules.{Fix, Issue, Rule}
 import java.io.File
 import scala.meta._
 
-case class Config(files: Seq[File] = Seq(), fix: Boolean = false, format: Boolean = false)
+case class Config(
+    files: Seq[File] = Seq(),
+    fix: Boolean = false,
+    format: Boolean = false
+)
 
 object Main {
   def main(args: Array[String]): Unit = {
@@ -34,8 +56,25 @@ object Main {
   }
 
   def runLinter(config: Config): Unit = {
-    val rules = Seq(AvoidCollect, AvoidCountZero, AvoidTupleAccess, AvoidDeepNesting, AvoidLongMethods, AvoidLargeTuples, FilterAfterJoin, ReplaceUnionAll, PreferFind, AvoidReturn, AvoidVar, AvoidVarUpdate, AvoidCatchingThrowable, AvoidNull, AvoidOptionGet, AvoidHead)
-    
+    val rules = Seq(
+      AvoidCollect,
+      AvoidCountZero,
+      AvoidTupleAccess,
+      AvoidDeepNesting,
+      AvoidLongMethods,
+      AvoidLargeTuples,
+      FilterAfterJoin,
+      ReplaceUnionAll,
+      PreferFind,
+      AvoidReturn,
+      AvoidVar,
+      AvoidVarUpdate,
+      AvoidCatchingThrowable,
+      AvoidNull,
+      AvoidOptionGet,
+      AvoidHead
+    )
+
     val filesToAnalyze = config.files.flatMap { file =>
       if (file.isDirectory) {
         findAllScalaFiles(file)
@@ -48,61 +87,73 @@ object Main {
     }
 
     filesToAnalyze.foreach { file =>
-      if (file.exists() && file.isFile) {
-        val path = java.nio.file.Paths.get(file.getAbsolutePath)
-        val bytes = java.nio.file.Files.readAllBytes(path)
-        val text = new String(bytes, "UTF-8")
-        val input = Input.VirtualFile(file.getPath, text)
-        
-        input.parse[Source] match {
-          case Parsed.Success(tree) =>
-            val issues = rules.flatMap(_.check(tree))
-            
-            if (config.fix || config.format) {
-              val fixes = issues.flatMap(_.fix).sortBy(_.position.start).reverse
-              var currentText = text
-              var changed = false
+      processFile(file, config, rules)
+    }
+  }
 
-              if (config.fix && fixes.nonEmpty) {
-                currentText = applyFixes(text, fixes)
-                changed = true
-                println(s"Fixed ${fixes.size} issues in ${file.getPath}")
-              }
-              
-              if (config.format) {
-                val scalafmt = org.scalafmt.interfaces.Scalafmt.create(this.getClass.getClassLoader)
-                val configPath = java.nio.file.Paths.get(".scalafmt.conf")
-                currentText = scalafmt.format(configPath, path, currentText)
-                changed = true
-              }
+  def processFile(file: File, config: Config, rules: Seq[Rule]): Unit = {
+    if (file.exists() && file.isFile) {
+      val path = java.nio.file.Paths.get(file.getAbsolutePath)
+      val bytes = java.nio.file.Files.readAllBytes(path)
+      val originalText = new String(bytes, "UTF-8")
 
-              if (changed && currentText != text) {
-                java.nio.file.Files.write(path, currentText.getBytes("UTF-8"))
-              }
-
-              if (config.fix) {
-                val manualIssues = issues.filter(_.fix.isEmpty)
-                if (manualIssues.nonEmpty) {
-                  println(s"The following issues require manual intervention in ${file.getPath}:")
-                  manualIssues.foreach(println)
-                }
-              } else {
-                issues.foreach(println)
-              }
-            } else {
-              issues.foreach(println)
-            }
-          case Parsed.Error(pos, message, _) =>
-            println(s"Error parsing ${file.getPath}: $message at $pos")
+      val textAfterFormat = if (config.format) {
+        val scalafmt = org.scalafmt.interfaces.Scalafmt
+          .create(this.getClass.getClassLoader)
+        val configPath = java.nio.file.Paths.get(".scalafmt.conf")
+        if (configPath.toFile.exists()) {
+          scalafmt.format(configPath, path, originalText)
+        } else {
+          println(
+            s"Warning: .scalafmt.conf not found. Skipping formatting for ${file.getPath}"
+          )
+          originalText
         }
+      } else {
+        originalText
+      }
+
+      val input = Input.VirtualFile(file.getPath, textAfterFormat)
+
+      input.parse[Source] match {
+        case Parsed.Success(tree) =>
+          val issues = rules.flatMap(_.check(tree))
+
+          val finalText = if (config.fix) {
+            val fixes = issues.flatMap(_.fix).sortBy(_.position.start).reverse
+            if (fixes.nonEmpty) {
+              println(s"Fixed ${fixes.size} issues in ${file.getPath}")
+              applyFixes(textAfterFormat, fixes)
+            } else {
+              textAfterFormat
+            }
+          } else {
+            textAfterFormat
+          }
+
+          if (finalText != originalText) {
+            java.nio.file.Files.write(path, finalText.getBytes("UTF-8"))
+          }
+
+          if (config.fix) {
+            val manualIssues = issues.filter(_.fix.isEmpty)
+            if (manualIssues.nonEmpty) {
+              println(
+                s"The following issues require manual intervention in ${file.getPath}:"
+              )
+              manualIssues.foreach(println)
+            }
+          } else {
+            issues.foreach(println)
+          }
+        case Parsed.Error(pos, message, _) =>
+          println(s"Error parsing ${file.getPath}: $message at $pos")
       }
     }
   }
 
   def findAllScalaFiles(dir: File): Seq[File] = {
-    val files = dir.listFiles()
-    if (files == null) Seq.empty
-    else files.toSeq.flatMap { f =>
+    Option(dir.listFiles()).map(_.toSeq).getOrElse(Seq.empty).flatMap { f =>
       if (f.isDirectory) findAllScalaFiles(f)
       else if (f.getName.endsWith(".scala")) Seq(f)
       else Seq.empty
@@ -110,12 +161,11 @@ object Main {
   }
 
   def applyFixes(source: String, fixes: Seq[Fix]): String = {
-    var currentText = source
-    fixes.foreach { fix =>
+    fixes.foldLeft(source) { (currentText, fix) =>
       val start = fix.position.start
       val end = fix.position.end
-      currentText = currentText.substring(0, start) + fix.replacement + currentText.substring(end)
+      currentText.substring(0, start) + fix.replacement + currentText
+        .substring(end)
     }
-    currentText
   }
 }
