@@ -82,7 +82,7 @@ object Main {
         Seq(file)
       } else {
         println(s"File not found: ${file.getPath}")
-        Seq.empty
+        sys.exit(1)
       }
     }
 
@@ -144,7 +144,7 @@ object Main {
               manualIssues.foreach(println)
             }
           } else {
-            issues.foreach(println)
+            issues.foreach(issue => println(s"${file.getPath}: $issue"))
           }
         case Parsed.Error(pos, message, _) =>
           println(s"Error parsing ${file.getPath}: $message at $pos")

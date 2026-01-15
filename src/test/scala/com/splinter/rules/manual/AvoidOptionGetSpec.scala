@@ -10,16 +10,16 @@ class AvoidOptionGetSpec extends AnyFlatSpec with Matchers {
     val code = "val x = opt.get"
     val tree = code.parse[Stat].get
     val issues = AvoidOptionGet.check(tree)
-    
+
     issues should have size 1
-    issues.head.message should include ("Avoid using .get")
+    issues.head.message should include("Avoid using .get")
   }
 
   it should "detect Option.get usage with parens" in {
     val code = "val x = opt.get()"
     val tree = code.parse[Stat].get
     val issues = AvoidOptionGet.check(tree)
-    
+
     issues should have size 1
   }
 
@@ -27,7 +27,7 @@ class AvoidOptionGetSpec extends AnyFlatSpec with Matchers {
     val code = "val x = map.get(key)"
     val tree = code.parse[Stat].get
     val issues = AvoidOptionGet.check(tree)
-    
-    issues should be (empty)
+
+    issues should be(empty)
   }
 }

@@ -7,7 +7,7 @@ import scala.meta._
 class AvoidCatchingThrowableSpec extends AnyFlatSpec with Matchers {
 
   "AvoidCatchingThrowable" should "detect catching Throwable with type" in {
-    val code = 
+    val code =
       """
       try {
         risky()
@@ -17,13 +17,13 @@ class AvoidCatchingThrowableSpec extends AnyFlatSpec with Matchers {
       """
     val tree = code.parse[Stat].get
     val issues = AvoidCatchingThrowable.check(tree)
-    
+
     issues should have size 1
-    issues.head.message should include ("Do not catch 'Throwable'")
+    issues.head.message should include("Do not catch 'Throwable'")
   }
 
   it should "allow catching Exception" in {
-    val code = 
+    val code =
       """
       try {
         risky()
@@ -33,7 +33,7 @@ class AvoidCatchingThrowableSpec extends AnyFlatSpec with Matchers {
       """
     val tree = code.parse[Stat].get
     val issues = AvoidCatchingThrowable.check(tree)
-    
-    issues should be (empty)
+
+    issues should be(empty)
   }
 }

@@ -15,7 +15,11 @@ object AvoidCountZero extends Rule {
             Nil,
             List(Lit.Int(0))
           ) =>
-        Issue("Performance: Use .isEmpty() instead of .count() == 0", term.pos, Some(Fix(s"${qual.syntax}.isEmpty()", term.pos)))
+        Issue(
+          "Performance: Use .isEmpty() instead of .count() == 0",
+          term.pos,
+          Some(Fix(s"${qual.syntax}.isEmpty()", term.pos))
+        )
 
       // Detect: 0 == rdd.count()
       case term @ Term.ApplyInfix(
@@ -24,7 +28,11 @@ object AvoidCountZero extends Rule {
             Nil,
             List(Term.Apply(Term.Select(qual, Term.Name("count")), Nil))
           ) =>
-        Issue("Performance: Use .isEmpty() instead of .count() == 0", term.pos, Some(Fix(s"${qual.syntax}.isEmpty()", term.pos)))
+        Issue(
+          "Performance: Use .isEmpty() instead of .count() == 0",
+          term.pos,
+          Some(Fix(s"${qual.syntax}.isEmpty()", term.pos))
+        )
     }
   }
 }

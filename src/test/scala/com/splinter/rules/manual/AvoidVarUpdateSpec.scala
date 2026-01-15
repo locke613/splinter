@@ -7,7 +7,7 @@ import scala.meta._
 class AvoidVarUpdateSpec extends AnyFlatSpec with Matchers {
 
   "AvoidVarUpdate" should "detect var assignment inside a for loop" in {
-    val code = 
+    val code =
       """
       {
         var x = 0
@@ -18,13 +18,13 @@ class AvoidVarUpdateSpec extends AnyFlatSpec with Matchers {
       """
     val tree = code.parse[Stat].get
     val issues = AvoidVarUpdate.check(tree)
-    
+
     issues should have size 1
-    issues.head.message should include ("Avoid updating vars inside loops")
+    issues.head.message should include("Avoid updating vars inside loops")
   }
 
   it should "detect var update (+=) inside an if condition" in {
-    val code = 
+    val code =
       """
       if (true) {
         x += 1 // Bad
@@ -32,19 +32,21 @@ class AvoidVarUpdateSpec extends AnyFlatSpec with Matchers {
       """
     val tree = code.parse[Stat].get
     val issues = AvoidVarUpdate.check(tree)
-    
+
     issues should have size 1
-    issues.head.message should include ("Avoid updating vars inside loops or conditions")
+    issues.head.message should include(
+      "Avoid updating vars inside loops or conditions"
+    )
   }
 
   it should "ignore var assignment at top level" in {
-    val code = 
+    val code =
       """
       x = 1 // OK (assuming x is defined elsewhere)
       """
     val tree = code.parse[Stat].get
     val issues = AvoidVarUpdate.check(tree)
-    
-    issues should be (empty)
+
+    issues should be(empty)
   }
 }

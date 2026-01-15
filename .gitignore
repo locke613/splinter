@@ -1,17 +1,10 @@
-*.class
-*.log
-
-# sbt specific
+.bloop/
+project/.bloop/
 .bsp/
+.metals/
 target/
 project/target/
-project/project/
-
-# IDEs
 .idea/
 .vscode/
-.metals/
-metals.sbt
-
-# OS specific
-.DS_Store
+project/project/
+project/metals.sbt
