@@ -188,4 +188,18 @@ object DemoApp {
     display(df)
     println(s"Count is: ${df.count()}")
   }
+
+  // Avoid withColumn in Loop
+  def withColumnInLoop(df: org.apache.spark.sql.DataFrame): Unit = {
+    var newDf = df
+    for (i <- 0 to 10) {
+      newDf = newDf.withColumn(s"col_$i", org.apache.spark.sql.functions.lit(i))
+    }
+  }
+
+  // Avoid Partition One
+  def partitionOne(df: org.apache.spark.sql.DataFrame): Unit = {
+    df.repartition(1)
+    df.coalesce(1)
+  }
 }

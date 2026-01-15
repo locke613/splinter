@@ -22,7 +22,9 @@ import com.splinter.rules.manual.{
   AvoidWhileTrue,
   SparkAvoidUnionInLoop,
   SparkAvoidFullDropDuplicates,
-  SparkAvoidInteractiveFunctions
+  SparkAvoidInteractiveFunctions,
+  SparkAvoidWithColumnInLoop,
+  SparkAvoidPartitionOne
 }
 import com.splinter.rules.{Fix, Issue, Rule}
 import java.io.File
@@ -80,7 +82,9 @@ object Main {
       AvoidWhileTrue,
       SparkAvoidUnionInLoop,
       SparkAvoidFullDropDuplicates,
-      SparkAvoidInteractiveFunctions
+      SparkAvoidInteractiveFunctions,
+      SparkAvoidWithColumnInLoop,
+      SparkAvoidPartitionOne
     )
 
     val filesToAnalyze = config.files.flatMap { file =>
