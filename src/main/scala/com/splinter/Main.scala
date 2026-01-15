@@ -17,7 +17,10 @@ import com.splinter.rules.manual.{
   AvoidCatchingThrowable,
   AvoidNull,
   AvoidOptionGet,
-  AvoidHead
+  AvoidHead,
+  CatchExceptionImmediatelyRethrown,
+  AvoidWhileTrue,
+  AvoidUnionInLoop
 }
 import com.splinter.rules.{Fix, Issue, Rule}
 import java.io.File
@@ -70,7 +73,10 @@ object Main {
       AvoidCatchingThrowable,
       AvoidNull,
       AvoidOptionGet,
-      AvoidHead
+      AvoidHead,
+      CatchExceptionImmediatelyRethrown,
+      AvoidWhileTrue,
+      AvoidUnionInLoop
     )
 
     val filesToAnalyze = config.files.flatMap { file =>

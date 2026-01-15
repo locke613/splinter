@@ -152,4 +152,26 @@ object DemoApp {
   def headUsage(seq: Seq[Int]): Unit = {
     val x = seq.head
   }
+
+  // Catch Exception Immediately Rethrown
+  def catchAndRethrow(): Unit = {
+    try {
+      val x = 1 / 0
+    } catch {
+      case e: Exception => throw e
+    }
+  }
+
+  // Avoid While True
+  def whileTrueLoop(): Unit = {
+    while (true) {
+      println("looping")
+    }
+  }
+
+  // Avoid Union in Loop
+  def unionInLoop(df: org.apache.spark.sql.DataFrame): Unit = {
+    val others = Seq(df, df)
+    others.foreach(other => df.union(other))
+  }
 }
