@@ -10,8 +10,8 @@ import scala.meta._
  * 
  * Ref: https://medium.com/@david.mudrauskas/looping-over-spark-an-antipattern-e10ac54824a0
  */
-object AvoidUnionInLoop extends Rule {
-  override def name: String = "AvoidUnionInLoop"
+object SparkAvoidUnionInLoop extends Rule {
+  override def name: String = "SparkAvoidUnionInLoop"
 
   override def check(tree: Tree): Seq[Issue] = {
     tree.collect {

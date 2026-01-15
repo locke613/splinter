@@ -174,4 +174,18 @@ object DemoApp {
     val others = Seq(df, df)
     others.foreach(other => df.union(other))
   }
+
+  // Avoid Full DropDuplicates
+  def fullDropDuplicates(df: org.apache.spark.sql.DataFrame): Unit = {
+    df.distinct()
+    df.dropDuplicates()
+  }
+
+  // Avoid Interactive Functions
+  def interactive(df: org.apache.spark.sql.DataFrame): Unit = {
+    def display(x: Any): Unit = {} // Stub for Databricks display
+    
+    display(df)
+    println(s"Count is: ${df.count()}")
+  }
 }

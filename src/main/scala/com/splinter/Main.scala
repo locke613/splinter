@@ -10,7 +10,7 @@ import com.splinter.rules.manual.{
   AvoidDeepNesting,
   AvoidLongMethods,
   AvoidLargeTuples,
-  FilterAfterJoin,
+  SparkFilterAfterJoin,
   AvoidReturn,
   AvoidVar,
   AvoidVarUpdate,
@@ -20,7 +20,9 @@ import com.splinter.rules.manual.{
   AvoidHead,
   CatchExceptionImmediatelyRethrown,
   AvoidWhileTrue,
-  AvoidUnionInLoop
+  SparkAvoidUnionInLoop,
+  SparkAvoidFullDropDuplicates,
+  SparkAvoidInteractiveFunctions
 }
 import com.splinter.rules.{Fix, Issue, Rule}
 import java.io.File
@@ -64,7 +66,7 @@ object Main {
       AvoidDeepNesting,
       AvoidLongMethods,
       AvoidLargeTuples,
-      FilterAfterJoin,
+      SparkFilterAfterJoin,
       ReplaceUnionAll,
       PreferFind,
       AvoidReturn,
@@ -76,7 +78,9 @@ object Main {
       AvoidHead,
       CatchExceptionImmediatelyRethrown,
       AvoidWhileTrue,
-      AvoidUnionInLoop
+      SparkAvoidUnionInLoop,
+      SparkAvoidFullDropDuplicates,
+      SparkAvoidInteractiveFunctions
     )
 
     val filesToAnalyze = config.files.flatMap { file =>
