@@ -202,4 +202,9 @@ object DemoApp {
     df.repartition(1)
     df.coalesce(1)
   }
+
+  // Avoid RDD Conversion
+  def rddConversion(df: org.apache.spark.sql.DataFrame): Unit = {
+    val rdd = df.rdd
+  }
 }

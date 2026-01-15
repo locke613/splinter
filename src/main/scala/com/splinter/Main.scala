@@ -1,9 +1,9 @@
 package com.splinter
 
 import com.splinter.rules.autofix.{
-  AvoidCountZero,
+  SparkAvoidCountZero,
   PreferFind,
-  ReplaceUnionAll
+  SparkReplaceUnionAll
 }
 import com.splinter.rules.manual.{
   AvoidTupleAccess,
@@ -24,7 +24,8 @@ import com.splinter.rules.manual.{
   SparkAvoidFullDropDuplicates,
   SparkAvoidInteractiveFunctions,
   SparkAvoidWithColumnInLoop,
-  SparkAvoidPartitionOne
+  SparkAvoidPartitionOne,
+  SparkAvoidRDDConversion
 }
 import com.splinter.rules.{Fix, Issue, Rule}
 import java.io.File
@@ -63,13 +64,13 @@ object Main {
 
   def runLinter(config: Config): Unit = {
     val rules = Seq(
-      AvoidCountZero,
+      SparkAvoidCountZero,
       AvoidTupleAccess,
       AvoidDeepNesting,
       AvoidLongMethods,
       AvoidLargeTuples,
       SparkFilterAfterJoin,
-      ReplaceUnionAll,
+      SparkReplaceUnionAll,
       PreferFind,
       AvoidReturn,
       AvoidVar,
@@ -84,7 +85,8 @@ object Main {
       SparkAvoidFullDropDuplicates,
       SparkAvoidInteractiveFunctions,
       SparkAvoidWithColumnInLoop,
-      SparkAvoidPartitionOne
+      SparkAvoidPartitionOne,
+      SparkAvoidRDDConversion
     )
 
     val filesToAnalyze = config.files.flatMap { file =>

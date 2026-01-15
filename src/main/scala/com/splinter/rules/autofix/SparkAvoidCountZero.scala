@@ -3,8 +3,8 @@ package com.splinter.rules.autofix
 import com.splinter.rules.{Rule, Issue, Fix}
 import scala.meta._
 
-object AvoidCountZero extends Rule {
-  override def name: String = "AvoidCountZero"
+object SparkAvoidCountZero extends Rule {
+  override def name: String = "SparkAvoidCountZero"
 
   override def check(tree: Tree): Seq[Issue] = {
     tree.collect {
