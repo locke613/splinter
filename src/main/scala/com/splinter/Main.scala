@@ -1,7 +1,6 @@
 package com.splinter
 
 import com.splinter.rules.autofix.{
-  AvoidCollect,
   AvoidCountZero,
   PreferFind,
   ReplaceUnionAll
@@ -57,7 +56,6 @@ object Main {
 
   def runLinter(config: Config): Unit = {
     val rules = Seq(
-      AvoidCollect,
       AvoidCountZero,
       AvoidTupleAccess,
       AvoidDeepNesting,
