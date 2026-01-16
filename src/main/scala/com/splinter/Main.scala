@@ -25,7 +25,8 @@ import com.splinter.rules.manual.{
   SparkAvoidInteractiveFunctions,
   SparkAvoidWithColumnInLoop,
   SparkAvoidPartitionOne,
-  SparkAvoidRDDConversion
+  SparkAvoidRDDConversion,
+  AvoidLargeFiles
 }
 import com.splinter.rules.{Fix, Issue, Rule}
 import java.io.File
@@ -86,7 +87,8 @@ object Main {
       SparkAvoidInteractiveFunctions,
       SparkAvoidWithColumnInLoop,
       SparkAvoidPartitionOne,
-      SparkAvoidRDDConversion
+      SparkAvoidRDDConversion,
+      AvoidLargeFiles
     )
 
     val filesToAnalyze = config.files.flatMap { file =>
